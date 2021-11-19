@@ -40,3 +40,11 @@ resource "digitalocean_droplet" "matomo" {
   region = "nyc1" # TODO: Adjust this
   size   = "s-1vcpu-1gb" # TODO: Adjust this
 }
+
+# Add an A record to the domain for matomo.thebalanceffxiv.com
+resource "digitalocean_record" "matomo" {
+  domain = "thebalanceffxiv.com"
+  type   = "A"
+  name   = "matomo"
+  value  = digitalocean_droplet.matomo.ipv4_address
+}
