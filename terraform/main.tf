@@ -35,11 +35,11 @@ resource "digitalocean_database_cluster" "matomo-backend" {
 }
 
 resource "digitalocean_droplet" "matomo" {
-  image  = "ubuntu-18-04-x64" # For Nono
-  name   = "matomo-webserver"
-  region = "nyc1"        # TODO: Adjust this
-  size   = "s-1vcpu-1gb" # TODO: Adjust this
-  ssh_keys = [ digitalocean_ssh_key.default.fingerprint ]
+  image    = "ubuntu-18-04-x64" # For Nono
+  name     = "matomo-webserver"
+  region   = "nyc1"        # TODO: Adjust this
+  size     = "s-1vcpu-1gb" # TODO: Adjust this
+  ssh_keys = [digitalocean_ssh_key.default.fingerprint]
 }
 
 resource "digitalocean_ssh_key" "default" {
@@ -58,8 +58,8 @@ resource "digitalocean_firewall" "web" {
   droplet_ids = [digitalocean_droplet.matomo.id]
 
   inbound_rule {
-    protocol         = "tcp"
-    port_range       = "22"
+    protocol   = "tcp"
+    port_range = "22"
     # Listing every possible GH Action runner ip here is really not feasible. We could try setting up a bastion maybe?
     source_addresses = ["0.0.0.0/0", "::/0"]
   }
@@ -82,14 +82,14 @@ resource "digitalocean_firewall" "web" {
   }
 
   outbound_rule {
-    protocol              = "tcp"
+    protocol = "tcp"
     # allow everything?
     port_range            = "1-65535"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
   outbound_rule {
-    protocol              = "udp"
+    protocol = "udp"
     # allow everything?
     port_range            = "1-65535"
     destination_addresses = ["0.0.0.0/0", "::/0"]
