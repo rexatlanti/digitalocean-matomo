@@ -7,10 +7,10 @@ terraform {
   }
   required_version = "~> 1.0.3"
   backend "remote" {
-    organization = "REPLACE_ME"
+    organization = "the-balance"
 
     workspaces {
-      name = "the-balance"
+      name = "matomo"
     }
   }
 }
