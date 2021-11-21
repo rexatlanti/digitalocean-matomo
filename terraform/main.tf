@@ -39,12 +39,73 @@ resource "digitalocean_droplet" "matomo" {
   name   = "matomo-webserver"
   region = "nyc1"        # TODO: Adjust this
   size   = "s-1vcpu-1gb" # TODO: Adjust this
+  ssh_keys = [ digitalocean_ssh_key.default.fingerprint ]
+}
+
+resource "digitalocean_ssh_key" "default" {
+  name       = "Standard key"
+  public_key = var.ssh_key
+}
+
+resource "digitalocean_floating_ip" "matomo-ip" {
+  droplet_id = digitalocean_droplet.matomo.id
+  region     = digitalocean_droplet.matomo.region
+}
+
+resource "digitalocean_firewall" "web" {
+  name = "only-22-80-and-443"
+
+  droplet_ids = [digitalocean_droplet.matomo.id]
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "22"
+    # Listing every possible GH Action runner ip here is really not feasible. We could try setting up a bastion maybe?
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "80"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "tcp"
+    port_range       = "443"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  inbound_rule {
+    protocol         = "icmp"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    # allow everything?
+    port_range            = "1-65535"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "udp"
+    # allow everything?
+    port_range            = "1-65535"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "icmp"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
 }
 
 # Add an A record to the domain for matomo.thebalanceffxiv.com
 resource "digitalocean_record" "matomo" {
+  count  = var.use_dns ? 1 : 0
   domain = "thebalanceffxiv.com"
   type   = "A"
   name   = "matomo"
-  value  = digitalocean_droplet.matomo.ipv4_address
+  value  = digitalocean_floating_ip.matomo-ip.ip_address
 }
