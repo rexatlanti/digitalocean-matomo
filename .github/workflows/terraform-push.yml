@@ -1,0 +1,42 @@
+name: "Terraform apply"
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  terraform-apply:
+    name: "Terraform apply"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.3
+          cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check terraform
+        continue-on-error: true
+
+      - name: Tell the user that fmt failed
+        id: fmt-check
+        run: echo "terraform fmt failed, please make sure your .tf files are properly formatted before committing."; exit 1
+        if: ${{ steps.fmt.outcome == 'failure' }}
+
+      - name: Terraform Init
+        id: init
+        run: terraform -chdir=terraform init
+      
+      - name: Terraform Validate
+        id: validate
+        run: terraform -chdir=terraform validate -no-color
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform -chdir=terraform apply -auto-approve

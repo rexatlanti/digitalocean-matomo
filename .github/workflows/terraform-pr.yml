@@ -1,0 +1,28 @@
+name: "Check PR"
+
+on:
+  pull_request:
+
+
+jobs:
+  terraform-fmt:
+    name: "Terraform fmt"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 1.0.3
+
+      - name: Terraform Format
+        id: fmt
+        run: terraform fmt -check terraform
+        continue-on-error: true
+
+      - name: Tell the user that fmt failed
+        id: fmt-check
+        run: echo "terraform fmt failed, please make sure your .tf files are properly formatted before committing."; exit 1
+        if: ${{ steps.fmt.outcome == 'failure' }}
