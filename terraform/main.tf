@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     digitalocean = {
-      source = "digitalocean/digitalocean"
+      source  = "digitalocean/digitalocean"
       version = "~> 2.0"
     }
   }
@@ -28,16 +28,16 @@ resource "digitalocean_database_db" "database" {
 resource "digitalocean_database_cluster" "matomo-backend" {
   name       = "matomo-backend-db-cluster"
   engine     = "mysql"
-  version    = "8" # TODO: Adjust this
+  version    = "8"              # TODO: Adjust this
   size       = "db-s-1vcpu-1gb" # TODO: Adjust this
-  region     = "nyc1" # TODO: Adjust this
+  region     = "nyc1"           # TODO: Adjust this
   node_count = 1
 }
 
 resource "digitalocean_droplet" "matomo" {
   image  = "ubuntu-18-04-x64" # For Nono
   name   = "matomo-webserver"
-  region = "nyc1" # TODO: Adjust this
+  region = "nyc1"        # TODO: Adjust this
   size   = "s-1vcpu-1gb" # TODO: Adjust this
 }
 
