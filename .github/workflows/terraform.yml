@@ -28,7 +28,7 @@ jobs:
       - name: Tell the user that fmt failed
         id: fmt-check
         run: echo "terraform fmt failed, please make sure your .tf files are properly formatted before committing."; exit 1
-        if: steps.fmt.outcome == "failure"
+        if: ${{ steps.fmt.outcome == 'failure' }}
 
       - name: Terraform Init
         id: init
