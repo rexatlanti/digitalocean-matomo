@@ -54,19 +54,17 @@ jobs:
       - name: Terraform output
         id: output1
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform output -raw db-host
+        run: terraform output db-host
 
       - name: Terraform output
         id: output2
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: terraform output -raw matomo-host
+        run: terraform output matomo-host
 
   ansible:
     name: "Ansible stuff"
     needs: terraform-apply
     runs-on: ubuntu-latest
-    env:
-      ansible_actions_working_dir: 'ansible'
     steps:
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
@@ -81,6 +79,6 @@ jobs:
           # requirements: requirements.yml
           # Optional, additional flags to pass to ansible-playbook
           options: |
-            -e db-ip=${{ needs.job.terraform-apply.outputs.db-ip }}
-            -e matomo-ip=${{ needs.job.terraform-apply.outputs.matomo-ip }}
+            -e db-ip=${{ needs.terraform-apply.outputs.db-ip }}
+            -e matomo-ip=${{ needs.terraform-apply.outputs.matomo-ip }}
             -vvvv
