@@ -63,6 +63,7 @@ jobs:
 
   ansible:
     name: "Ansible stuff"
+    needs: terraform-apply
     runs-on: ubuntu-latest
     env:
       ansible_actions_working_dir: 'ansible'
