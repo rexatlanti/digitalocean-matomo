@@ -70,7 +70,7 @@ jobs:
         uses: dawidd6/action-ansible-playbook@v2
         with:
           # Required, playbook filepath
-          playbook: ${{github.workspace}}/ansible/playbooks/main.yml
+          playbook: ${{github.workspace}}/ansible/playbooks/main.yaml
           # Optional, directory where playbooks live
           # directory: ${{github.workspace}}/ansible/playbooks/
           # Optional, SSH private key
