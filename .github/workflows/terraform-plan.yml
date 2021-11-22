@@ -41,7 +41,7 @@ jobs:
                archive_format: 'zip',
             });
             var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+            fs.writeFileSync('${{github.workspace}}/${{ env.tf_actions_working_dir }}/pr.zip', Buffer.from(download.data));
 
       - run: unzip pr.zip
 
