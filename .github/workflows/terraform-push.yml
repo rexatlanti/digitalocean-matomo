@@ -84,4 +84,3 @@ jobs:
           options: |
             -e db_ip=${{ needs.terraform-apply.outputs.db-ip }}
             -e matomo_ip=${{ needs.terraform-apply.outputs.matomo-ip }}
-            -vvvv
