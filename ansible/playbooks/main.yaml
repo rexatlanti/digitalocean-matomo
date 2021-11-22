@@ -1,4 +1,16 @@
-- hosts: "{{ matomo_ip }}"
+---
+# Lord forgive me for I have sinned.
+# TODO: Not this. Please.
+- hosts: localhost
+  connection: local
   tasks:
-    - name: test
+    - name: Add host
+      add_host:
+        name: matomo.thebalanceffxiv.com
+        ansible_host: "{{ matomo_ip }}"
+        groups: matomo
+
+- hosts: matomo
+  tasks:
+    - name: ping
       ansible.builtin.ping:
