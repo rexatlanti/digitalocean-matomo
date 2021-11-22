@@ -10,9 +10,14 @@ jobs:
   terraform-plan:
     name: "Terraform"
     runs-on: ubuntu-latest
+    env:
+      tf_actions_working_dir: 'terraform'
     if: >
       ${{ github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success' }}
+    defaults:
+      run:
+        working-directory: ${{ env.tf_actions_working_dir }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -36,7 +41,7 @@ jobs:
                archive_format: 'zip',
             });
             var fs = require('fs');
-            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+            fs.writeFileSync('${{github.workspace}}/${{ env.tf_actions_working_dir }}/pr.zip', Buffer.from(download.data));
 
       - run: unzip pr.zip
 
@@ -48,20 +53,20 @@ jobs:
 
       - name: Terraform Format
         id: fmt
-        run: terraform fmt -check terraform
+        run: terraform fmt -check
         continue-on-error: true
 
       - name: Terraform Init
         id: init
-        run: terraform -chdir=terraform init
+        run: terraform init
       
       - name: Terraform Validate
         id: validate
-        run: terraform -chdir=terraform validate -no-color
+        run: terraform validate -no-color
 
       - name: Terraform Plan
         id: plan
-        run: terraform -chdir=terraform plan -no-color
+        run: terraform plan -no-color
         continue-on-error: true
 
       - uses: actions/github-script@0.9.0
@@ -71,17 +76,22 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             var fs = require('fs');
-            var issue_number = Number(fs.readFileSync('./NR'));
+            var issue_number = Number(fs.readFileSync('${{github.workspace}}/${{ env.tf_actions_working_dir }}/NR'));
             const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
             #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
             #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
             #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+            
             <details><summary>Show Plan</summary>
+            
             \`\`\`\n
-            ${process.env.PLAN}
+            ${process.env.PLAN}\n
             \`\`\`
+            
             </details>
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+      
+            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Working Directory: \`${{ env.tf_actions_working_dir }}\`, Workflow: \`${{ github.workflow }}\`*`;
+        
             github.issues.createComment({
               issue_number: issue_number,
               owner: context.repo.owner,
