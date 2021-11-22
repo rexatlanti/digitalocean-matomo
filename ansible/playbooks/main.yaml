@@ -1,4 +1,4 @@
-- hosts: "{{ matomo-ip }}"
+- hosts: "{{ matomo_ip }}"
   tasks:
     - name: test
       ansible.builtin.ping:
