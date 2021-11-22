@@ -72,7 +72,7 @@ jobs:
           # Required, playbook filepath
           playbook: main.yml
           # Optional, directory where playbooks live
-          directory: ./ansible/playbooks/
+          directory: ${{github.workspace}}/ansible/playbooks/
           # Optional, SSH private key
           key: ${{secrets.SSH_KEY}}
           # Optional, galaxy requirements filepath
