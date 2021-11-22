@@ -9,6 +9,7 @@
         name: matomo.thebalanceffxiv.com
         ansible_host: "{{ matomo_ip }}"
         ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
+        ansible_user: root
         groups: matomo
 
 - hosts: matomo
