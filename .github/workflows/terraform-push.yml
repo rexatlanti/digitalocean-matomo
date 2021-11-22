@@ -15,8 +15,8 @@ jobs:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}
     outputs:
-      db-ip: ${{ steps.output1.outputs.test }}
-      matomo-ip: ${{ steps.output2.outputs.test }}
+      db-ip: ${{ steps.output1.outputs.stdout }}
+      matomo-ip: ${{ steps.output2.outputs.stdout }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -54,12 +54,12 @@ jobs:
       - name: Terraform output
         id: output1
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: echo "::set-output name=test::$(terraform output -raw db-host)"
+        run: terraform output -raw db-host
 
       - name: Terraform output
         id: output2
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        run: echo "::set-output name=test::$(terraform output -raw matomo-host)"
+        run: terraform output -raw matomo-host
 
   ansible:
     name: "Ansible stuff"
@@ -74,7 +74,7 @@ jobs:
           # Required, playbook filepath
           playbook: main.yml
           # Optional, directory where playbooks live
-          directory: ansible/playbooks
+          directory: ./ansible/playbooks
           # Optional, SSH private key
           key: ${{secrets.SSH_KEY}}
           # Optional, galaxy requirements filepath
