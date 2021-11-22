@@ -8,6 +8,7 @@
       add_host:
         name: matomo.thebalanceffxiv.com
         ansible_host: "{{ matomo_ip }}"
+        ansible_ssh_extra_args: '-o StrictHostKeyChecking=no'
         groups: matomo
 
 - hosts: matomo
