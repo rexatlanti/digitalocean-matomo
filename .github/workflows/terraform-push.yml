@@ -66,13 +66,16 @@ jobs:
     needs: terraform-apply
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
         with:
           # Required, playbook filepath
-          playbook: ${{github.workspace}}/ansible/playbooks/main.yaml
+          playbook: main.yaml
           # Optional, directory where playbooks live
-          # directory: ${{github.workspace}}/ansible/playbooks/
+          directory: ./ansible/playbooks/
           # Optional, SSH private key
           key: ${{secrets.SSH_KEY}}
           # Optional, galaxy requirements filepath
