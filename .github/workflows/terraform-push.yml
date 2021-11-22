@@ -66,9 +66,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ansible_actions_working_dir: 'ansible'
-    defaults:
-      run:
-        working-directory: ${{ env.ansible_actions_working_dir }}
     steps:
       - name: Run playbook
         uses: dawidd6/action-ansible-playbook@v2
@@ -76,7 +73,7 @@ jobs:
           # Required, playbook filepath
           playbook: main.yml
           # Optional, directory where playbooks live
-          directory: ${{ env.ansible_actions_working_dir }}/playbooks
+          directory: ansible/playbooks
           # Optional, SSH private key
           key: ${{secrets.SSH_KEY}}
           # Optional, galaxy requirements filepath
