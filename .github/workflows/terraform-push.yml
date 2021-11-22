@@ -82,6 +82,7 @@ jobs:
           # requirements: requirements.yml
           # Optional, additional flags to pass to ansible-playbook
           options: |
+            -i ansible/inventories/hosts.ini
             -e db_ip=${{ needs.terraform-apply.outputs.db-ip }}
             -e matomo_ip=${{ needs.terraform-apply.outputs.matomo-ip }}
             -vvvv
