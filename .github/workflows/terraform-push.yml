@@ -14,6 +14,9 @@ jobs:
     defaults:
       run:
         working-directory: ${{ env.tf_actions_working_dir }}
+    outputs:
+      db-ip: "${{ steps.output1.outputs.stdout }}"
+      matomo-ip: "${{ steps.output2.outputs.stdout }}"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -43,5 +46,41 @@ jobs:
         run: terraform validate -no-color
 
       - name: Terraform Apply
+        id: apply
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
+      # Not nice but it works:tm:
+      # TODO: use anisble provider etc
+      - name: Terraform output
+        id: output1
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform output db-host
+
+      - name: Terraform output
+        id: output2
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform output matomo-host
+
+  ansible:
+    name: "Ansible stuff"
+    needs: terraform-apply
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Run playbook
+        uses: dawidd6/action-ansible-playbook@v2
+        with:
+          # Required, playbook filepath
+          playbook: main.yaml
+          # Optional, directory where playbooks live
+          directory: ./ansible/playbooks/
+          # Optional, SSH private key
+          key: ${{secrets.SSH_KEY}}
+          # Optional, galaxy requirements filepath
+          # requirements: requirements.yml
+          # Optional, additional flags to pass to ansible-playbook
+          options: |
+            -e db_ip=${{ needs.terraform-apply.outputs.db-ip }}
+            -e matomo_ip=${{ needs.terraform-apply.outputs.matomo-ip }}
