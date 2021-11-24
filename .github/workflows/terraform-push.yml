@@ -79,7 +79,7 @@ jobs:
           # Optional, SSH private key
           key: ${{secrets.SSH_KEY}}
           # Optional, galaxy requirements filepath
-          # requirements: requirements.yml
+          requirements: ./ansible/requirements.yml
           # Optional, additional flags to pass to ansible-playbook
           options: |
             -e db_ip=${{ needs.terraform-apply.outputs.db-ip }}
