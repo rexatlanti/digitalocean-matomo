@@ -125,14 +125,13 @@ resource "digitalocean_project" "project" {
     digitalocean_database_cluster.matomo-backend.urn,
     digitalocean_droplet.matomo.urn,
     digitalocean_floating_ip.matomo-ip.urn,
-    digitalocean_vpc.matomo.urn,
   ]
 }
 
 resource "digitalocean_vpc" "matomo" {
   name     = "matomo-private-network"
   region   = var.do_region
-  ip_range = "10.10.10.0/24"
+  ip_range = "10.116.16.0/20"
 }
 
 resource "digitalocean_database_firewall" "db-fw" {
