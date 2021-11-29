@@ -30,12 +30,13 @@ resource "digitalocean_database_db" "database" {
 }
 
 resource "digitalocean_database_cluster" "matomo-backend" {
-  name       = "matomo-backend-db-cluster"
-  engine     = "mysql"
-  version    = var.db_version
-  size       = var.db_size
-  region     = var.do_region
-  node_count = 1
+  name                 = "matomo-backend-db-cluster"
+  engine               = "mysql"
+  version              = var.db_version
+  size                 = var.db_size
+  region               = var.do_region
+  node_count           = 1
+  private_network_uuid = digitalocean_vpc.matomo.id
 }
 
 resource "digitalocean_droplet" "matomo" {
@@ -44,6 +45,7 @@ resource "digitalocean_droplet" "matomo" {
   region   = var.do_region
   size     = "s-1vcpu-1gb" # TODO: Adjust this
   ssh_keys = [digitalocean_ssh_key.default.fingerprint]
+  vpc_uuid = digitalocean_vpc.matomo.id
 }
 
 resource "digitalocean_ssh_key" "default" {
@@ -123,5 +125,12 @@ resource "digitalocean_project" "project" {
     digitalocean_database_cluster.matomo-backend.urn,
     digitalocean_droplet.matomo.urn,
     digitalocean_floating_ip.matomo-ip.urn,
+    digitalocean_vpc.matomo.urn,
   ]
+}
+
+resource "digitalocean_vpc" "matomo" {
+  name     = "matomo-private-network"
+  region   = var.do_region
+  ip_range = "10.10.10.0/24"
 }
