@@ -47,22 +47,23 @@ jobs:
 
       - name: Terraform Apply
         id: apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && github.owner == 'The-Balance-FFXIV'
         run: terraform apply -auto-approve
       # Not nice but it works:tm:
       # TODO: use anisble provider etc
       - name: Terraform output
         id: output1
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && github.owner == 'The-Balance-FFXIV'
         run: terraform output db-host
 
       - name: Terraform output
         id: output2
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && github.owner == 'The-Balance-FFXIV'
         run: terraform output matomo-host
 
   ansible:
     name: "Ansible stuff"
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push' && github.owner == 'The-Balance-FFXIV'
     needs: terraform-apply
     runs-on: ubuntu-latest
     steps:
