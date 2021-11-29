@@ -125,7 +125,6 @@ resource "digitalocean_project" "project" {
     digitalocean_database_cluster.matomo-backend.urn,
     digitalocean_droplet.matomo.urn,
     digitalocean_floating_ip.matomo-ip.urn,
-    digitalocean_vpc.matomo.urn,
   ]
 }
 
