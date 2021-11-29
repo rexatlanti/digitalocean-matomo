@@ -134,3 +134,12 @@ resource "digitalocean_vpc" "matomo" {
   region   = var.do_region
   ip_range = "10.10.10.0/24"
 }
+
+resource "digitalocean_database_firewall" "db-fw" {
+  cluster_id = digitalocean_database_cluster.matomo-backend.id
+
+  rule {
+    type  = "droplet"
+    value = digitalocean_droplet.matomo.id
+  }
+}
