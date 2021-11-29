@@ -117,7 +117,7 @@ resource "digitalocean_record" "matomo" {
 resource "digitalocean_project" "project" {
   name        = "website"
   description = "The project for The Balance™ job website."
-  purpose     = "Webapplicaion"
+  purpose     = "Web Application"
   environment = "Development"
   resources = [
     digitalocean_database_cluster.matomo-backend.urn,
