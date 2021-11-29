@@ -113,3 +113,15 @@ resource "digitalocean_record" "matomo" {
   name   = "matomo"
   value  = digitalocean_floating_ip.matomo-ip.ip_address
 }
+
+resource "digitalocean_project" "project" {
+  name        = "website"
+  description = "The project for The Balance™ job website."
+  purpose     = "Web Application"
+  environment = "Development"
+  resources = [
+    digitalocean_database_cluster.matomo-backend.urn,
+    digitalocean_droplet.matomo.urn,
+    digitalocean_floating_ip.matomo-ip.urn,
+  ]
+}
