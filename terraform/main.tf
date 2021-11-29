@@ -132,5 +132,5 @@ resource "digitalocean_project" "project" {
 resource "digitalocean_vpc" "matomo" {
   name     = "matomo-private-network"
   region   = var.do_region
-  ip_range = "10.116.0.0/20"
+  ip_range = "10.116.16.0/20"
 }
